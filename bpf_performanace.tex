@@ -31,7 +31,7 @@
 %\usetheme{Berlin}
 %\usetheme{Boadilla}
 %\usetheme{CambridgeUS}
-\usetheme{Copenhagen}
+%\usetheme{Copenhagen}
 %\usetheme{Darmstadt}
 %\usetheme{Dresden}
 %\usetheme{Frankfurt}
@@ -47,7 +47,7 @@
 %\usetheme{PaloAlto}
 %\usetheme{Pittsburgh}
 %\usetheme{Rochester}
-%\usetheme{Singapore}
+\usetheme{Singapore}
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
@@ -63,10 +63,10 @@
 %\usecolortheme{dove}
 %\usecolortheme{fly}
 %\usecolortheme{lily}
-%\usecolortheme{orchid}
+\usecolortheme{orchid}
 %\usecolortheme{rose}
 %\usecolortheme{seagull}
-\usecolortheme{seahorse}
+%\usecolortheme{seahorse}
 %\usecolortheme{whale}
 %\usecolortheme{wolverine}
 
@@ -102,6 +102,16 @@ DataArt\\ % Your institution for the title page
 \end{frame}
 
 \begin{frame}
+\frametitle{Hello}
+\begin{itemize}
+\item<1-> Work in Java/JVM centric technologies for over 11 years
+\item<2-> Currently in DataArt Lublin
+\item<3-> Worked in different domains (education, health care, finance, retail)
+\item<4-> Mostly programming but also been doing a little bit of SRE
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Overview} % Table of contents slide, comment this block out to remove it
 \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
@@ -111,16 +121,57 @@ DataArt\\ % Your institution for the title page
 %----------------------------------------------------------------------------------------
 
 %------------------------------------------------
-\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+\section{Introduction} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
 
-\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\subsection{History} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
 \begin{frame}
-\frametitle{Paragraphs of Text}
-Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.\\~\\
+\frametitle{History}
+\begin{itemize}
+\item<1->
+BPF (Berkeley Packet Filter)
 
-Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio. Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis. Vestibulum ultrices tincidunt libero, quis commodo erat ullamcorper id.
+A minimal instruction set that can be used to filter packets before they are seen by an application such
+as tcpdump
+\item<2->
+In 2014 Alexei Starovoitov created extend BPF so it could be use in wide areas.
+He turned BPF into a general-purpose virtual machine, that can be used for a variety of things,
+including the creation of advanced performance analysis tools.
+
+\item<3-> Nowdays BPF means actually eBPF
+\end{itemize}
+\end{frame}
+
+\subsection{Basic Terms}
+
+\begin{frame}
+\frametitle{Tracing}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Snooping}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Sampling}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Profiling}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Observability}
+
 \end{frame}
 
 %------------------------------------------------
@@ -174,8 +225,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ul
 \end{frame}
 
 %------------------------------------------------
-\section{Second Section}
+\section{Demo}
 %------------------------------------------------
+
+\begin{frame}
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Table}
@@ -205,15 +260,22 @@ $E = mc^2$
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
+\frametitle{Example Oneliners}
+\begin{example}[Open File]
 \begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
+bpftrace -e 'tracepoint:syscalls:sys_enter_open 
+{ printf("%d %s %s\n", pid, comm, str(args->filename)); }'
+\end{verbatim}
+\end{example}
+\end{frame}
+
+
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Example Oneliners}
+\begin{example}[Number of times when process open a file]
+\begin{verbatim}
+sudo bpftrace -e 't:syscalls:sys_enter_open { @[comm, str(args->filename)] = count();}'
+\end{verbatim}
 \end{example}
 \end{frame}
 
@@ -242,9 +304,9 @@ This statement requires citation \cite{p1}.
 \frametitle{References}
 \footnotesize{
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678.
+\bibitem[Gregg, 2020]{p1} Brendan Gregg (2020)
+\newblock BPF Performance Tools
+\newblock Linux System and Applicaton Observalility
 \end{thebibliography}
 }
 \end{frame}
