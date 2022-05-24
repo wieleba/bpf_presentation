@@ -101,15 +101,15 @@ DataArt\\ % Your institution for the title page
 \titlepage % Print the title page as the first slide
 \end{frame}
 
-\begin{frame}
-\frametitle{Hello}
-\begin{itemize}
-\item<1-> Work in Java/JVM centric technologies for over 11 years
-\item<2-> Currently in DataArt Lublin
-\item<3-> Worked in different domains (education, health care, finance, retail)
-\item<4-> Mostly programming but also been doing a little bit of SRE
-\end{itemize}
-\end{frame}
+%\begin{frame}
+%\frametitle{Hello}
+%\begin{itemize}
+%\item<1-> Work in Java/JVM centric technologies for over 11 years
+%\item<2-> Currently in DataArt Lublin
+%\item<3-> Worked in different domains (education, health care, finance, retail)
+%\item<4-> Mostly programming but also been doing a little bit of SRE
+%\end{itemize}
+%\end{frame}
 
 \begin{frame}
 \frametitle{Overview} % Table of contents slide, comment this block out to remove it
@@ -123,8 +123,50 @@ DataArt\\ % Your institution for the title page
 %------------------------------------------------
 \section{Introduction} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
+\subsection{Basic Terms}
 
-\subsection{History} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\begin{frame}
+  \begin{block}{Tracing}
+    \begin{itemize}
+      \item<1-> Typically it's an event-based recording.  Big volume require post-processing.
+      \item<2-> Some tracers doesn't record events but rather display, periodicaly updated, statistics. Tracers are: \emp{strace}, \emp{top}, \emp{tcpdump}. 
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{Snooping}
+    \begin{itemize}
+      \item On Solaris tracer was called \emp{snoop}, that's the reason why we can find bpf based tracers that have snoop in name (execsnoop, opensoop, biosnoop).
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{Sampling/Profiling}
+    \begin{itemize}
+      \item<1-> Analyze part of measurements to show coarse grain picture of the system
+      \item<2-> Performance overhead can be lower than for tracers
+      \item<3-> Samples can be taken once every n miliseconds or n times per second 
+    \end{itemize}
+  \end{block} 
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}{Observability}
+    \begin{itemize}
+      \item<1-> Reasoning about the system through observation
+      \item<2-> BPF tools are observability tools including tracers, samplers
+      \item<3-> Benchmarks are not observability tools as they perform predefined work. This doesn't show actual system state
+    \end{itemize}
+  \end{block} 
+\end{frame}
+
+
+\subsection{BPF} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
 \begin{frame}
 \frametitle{History}
@@ -138,125 +180,100 @@ as tcpdump
 In 2014 Alexei Starovoitov created extend BPF so it could be use in wide areas.
 He turned BPF into a general-purpose virtual machine, that can be used for a variety of things,
 including the creation of advanced performance analysis tools.
-
 \item<3-> Nowdays BPF means actually eBPF
 \end{itemize}
 \end{frame}
 
-\subsection{Basic Terms}
-
 \begin{frame}
-\frametitle{Tracing}
+  \frametitle{How BPF looks like?}
+  \begin{itemize}
+    \item<1-> BPF code is similar to bytecode or simple assembly language
+    \item<2-> It's rather low level concept designed to be emmited by higher level tools
+    \item<3-> sudo bpftrace -e 'tracepoint:syscalls:sys\_enter\_exec* { @[comm, pid]=count();}'
+		\begin{block}{sudo bpftool prog dump xlated id 4}
+			 0: (b7) r1 = 0
 
+			 1: (7b) *(u64 *)(r10 -8) = r1
+
+			 2: (7b) *(u64 *)(r10 -16) = r1
+
+			 3: (bf) r1 = r10
+
+			 4: (07) r1 += -16
+
+			 5: (b7) r2 = 16
+
+			 6: (85) call bpf\_get\_current\_comm#119536
+			 
+			 ................
+      \end{block}
+  \end{itemize}
 \end{frame}
 
-
 \begin{frame}
-\frametitle{Snooping}
-
+  \frametitle{What makes BPF based tools sufficient for analysis in production}
+  \begin{itemize}
+    \item<1-> Efficient and production safe 
+		\item<2-> Build-in into kernel
+    \item<3-> No need to add new kernel modules(verifier doesn't allow code that run kernel panic)
+		\item<4-> No need to copy every event from kernelspace to userspace 
+	\end{itemize}
 \end{frame}
 
+\subsection{Instrumentation}
 
 \begin{frame}
-\frametitle{Sampling}
+  \frametitle{Dynamic Instrumentation kprobes}
+  \begin{itemize}
+    \item<1-> kprobes can create instrumentation events for any kernel function, and it can instrument instructions within functions
 
+		\item<2-> kprobe and kretprobe allows to calculate the duration of a function 
+		\item<3-> in bpftrace kprobes starts with 'kprobe:' or simple 'k:'
+    \item<4-> breakepoint instruction int3 or jmp is set in place of target function address and is removed when no longer needed
+    \item<5-> #bpftrace -l 'kprobe:*'
+	\end{itemize}	
 \end{frame}
 
-
 \begin{frame}
-\frametitle{Profiling}
-
+  \frametitle{Dynamic Instrumentation uprobes}
+  \begin{itemize}
+    \item<1-> uprobes are similar to kprobes but are designed to instrument user-space processes
+		\item<2-> similar there is uretprobe
+		\item<3-> in bpftrace uprobes starts with 'uprobe:' or simple 'u:'
+		\item<4-> can be use to instrument libraries
+    \item<5-> #bpftrace -l 'uprobe:/lib/x86\_64-linux-gnu/libc.so.6'
+	\end{itemize}	
 \end{frame}
 
-
 \begin{frame}
-\frametitle{Observability}
-
+  \frametitle{Static Instruemntation}
 \end{frame}
 
 %------------------------------------------------
-
+\subsection{FrontEnd tools for BPF}
 \begin{frame}
-\frametitle{Bullet Points}
-\begin{itemize}
-\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-\item Nam cursus est eget velit posuere pellentesque
-\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
-\end{itemize}
+  \frametitle{BCC (BPF Compiler Collection)}
+  \begin{itemize}
+    \item<1-> BCC allows to write BPF kernel in C and user interface in Python, Lua or C++
+    \item<2-> Instalation provides over 70 ready to use performance analysis tools
+    \item<3-> No need to write BCC code by yourself
+    \item<4-> opensoop, gethostlatency, biotop, tcpconlat, execsnoop and may other
+  \end{itemize}
 \end{frame}
 
-%------------------------------------------------
-
 \begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-\end{block}
-
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
-\end{block}
-
-\begin{block}{Block 3}
-Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
-\end{block}
+  \frametitle{bpftrace}
+  \begin{itemize}
+    \item<1-> New frontend tool
+    \item<2-> Provide AWK like language to write very specific analytic tools often called oneliners
+    \item<3-> More complicated tools can be written as a '.bt' scripts
+    \item<4-> 
+  \end{itemize}
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Multiple Columns}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
-
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-
-\end{columns}
-\end{frame}
 
 %------------------------------------------------
 \section{Demo}
-%------------------------------------------------
-
-\begin{frame}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Table}
-\begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}
-
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
@@ -279,26 +296,16 @@ sudo bpftrace -e 't:syscalls:sys_enter_open { @[comm, str(args->filename)] = cou
 \end{example}
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
-\end{frame}
-
-%------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
-
-This statement requires citation \cite{p1}.
+\frametitle{Example Oneliners}
+\begin{example}[Concurrency]
+\begin{verbatim}
+bpftrace -e 'k:vfs_read { @cpuhash = count(); @hash++; }'
+\end{verbatim}
+\end{example}
 \end{frame}
 
-%------------------------------------------------
 
 \begin{frame}
 \frametitle{References}
@@ -306,7 +313,7 @@ This statement requires citation \cite{p1}.
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
 \bibitem[Gregg, 2020]{p1} Brendan Gregg (2020)
 \newblock BPF Performance Tools
-\newblock Linux System and Applicaton Observalility
+\newblock Linux System and Application Observability
 \end{thebibliography}
 }
 \end{frame}

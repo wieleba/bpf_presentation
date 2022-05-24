@@ -1,0 +1,17 @@
+History:
+Item <1>
+	2.2 BPF
+	BPF was originally developed for the BSD operating system, and is described in the 1992 paper “The BSD
+	Packet Filter: A New Architecture for User-level Packet Capture” [McCanne 92] . This paper was presented at
+	the 1993 USENIX Winter conference in San Diego, alongside “Measurement, Analysis, and Improvement of
+	UDP/IP Throughput for the DECstation 5000” [7] . DECstations are long gone, but BPF has survived as the
+	industry standard solution for packet filtering.
+	BPF works in an interesting way: A filter expression is defined by the end user using an instruction set for a
+	BPF virtual machine (sometimes called the BPF bytecode) and then passed to the kernel for execution by an
+	interpreter. This allows filtering to occur in the kernel level without costly copies of each packet going to the
+	user-level processes, improving the performance of packet filtering, as used by tcpdump(8). It also provides
+	safety, as filters from user space can be verified as being safe before execution. Given that early packet
+	filtering had to occur in kernel space, safety was a hard requirement.
+
+
+

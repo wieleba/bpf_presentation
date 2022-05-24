@@ -8,3 +8,11 @@ bpf_performanace.synctex.gz
 bpf_performanace.toc
 bpf_performanace.vrb
 
+*.aux
+*.log
+*.nav
+*.out
+*.pdf
+*.snm
+*.toc
+*.vrb
