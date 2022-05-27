@@ -218,7 +218,7 @@ including the creation of advanced performance analysis tools.
   \begin{itemize}
     \item<1-> Efficient and production safe 
 		\item<2-> Build-in into kernel
-    \item<3-> No need to add new kernel modules(verifier doesn't allow code that run kernel panic)
+    \item<3-> No need to add new kernel modules (verifier doesn't allow code that run kernel panic)
 		\item<4-> No need to copy every event from kernelspace to userspace 
 	\end{itemize}
 \end{frame}
@@ -274,29 +274,28 @@ including the creation of advanced performance analysis tools.
 \begin{frame}
   \frametitle{BCC (BPF Compiler Collection)}
   \begin{itemize}
-    \item<1-> BCC allows to write BPF kernel in C and user interface in Python, Lua or C++
-    \item<2-> Instalation provides over 70 ready to use performance analysis tools
-    \item<3-> No need to write BCC code by yourself
-    \item<4-> opensoop, gethostlatency, biotop, tcpconlat, execsnoop and may other
-    \item<5-> ~120 small tools, typically /usr/share/bcc/tools
+    \item<+-> BCC allows to write BPF kernel in C and user interface in Python, Lua or C++
+    \item<+-> Instalation provides over 70 ready to use performance analysis tools
+    \item<+-> No need to write BCC code by yourself
+    \item<+-> ~120 small tools, typically /usr/share/bcc/tools
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{bpftrace}
+  \begin{itemize}
+    \item<+-> New frontend tool
+    \item<+-> Provide AWK like language to write very specific analytic tools often called oneliners
+    \item<+-> More complicated tools can be written as a '.bt' scripts
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \begin{figure}
     \centering
-    %\noindent\makebox[\textwidth]{\includegraphics[width=\paperwidth]{bcc_tracing_tools_2019}}
-		\noindent\makebox[\textwidth]{\includegraphics[width=\paperwidth]{image.png}}
+    \noindent\makebox[\textwidth]{\includegraphics[width=\paperwidth]{bcc_tracing_tools_2019}}
   \end{figure}
-\end{frame}
-
-\begin{frame}
-  \frametitle{bpftrace}
-  \begin{itemize}
-    \item<1-> New frontend tool
-    \item<2-> Provide AWK like language to write very specific analytic tools often called oneliners
-    \item<3-> More complicated tools can be written as a '.bt' scripts
-  \end{itemize}
 \end{frame}
 
 
@@ -304,12 +303,71 @@ including the creation of advanced performance analysis tools.
 \section{Demo}
 %------------------------------------------------
 
+\subsection{CPU}
+\begin{frame}
+	\begin{itemize}
+		\item<+-> cpuwalk
+		\item<+-> runqlen
+		\item<+-> runqlat
+		\item<+-> runqslower
+		\item<+-> execsnoop
+	\end{itemize}
+\end{frame}
+
+\subsection{Memory}
+\begin{frame}
+	\begin{itemize}
+		\item<+-> TBD
+		\item<+-> TBD 
+		\item<+-> TBD
+		\item<+-> TBD
+	\end{itemize}
+\end{frame}
+
+\subsection{VFS}
+\begin{frame}
+	\begin{itemize}
+		\item<+-> opensnoop
+		\item<+-> statsnoop 
+		\item<+-> syncsnoop
+		\item<+-> vfsstat
+		\item<+-> vfscount
+		\item<+-> filetop
+		\item<+-> filelife
+		\item<+-> mountsnoop
+	\end{itemize}
+\end{frame}
+
+\subsection{IO}
+\begin{frame}
+	\begin{itemize}
+		\item<+-> biolatency
+		\item<+-> iostat 
+		\item<+-> biosnoop.bt
+		\item<+-> bitesize
+	\end{itemize}
+\end{frame}
+
+\subsection{Network}
+\begin{frame}
+	\begin{itemize}
+		\item<+-> gethostlatency
+		\item<+-> tcpconlat 
+		\item<+-> 
+		\item<+-> 
+		\item<+-> 
+	\end{itemize}
+\end{frame}
+
+
+\subsection{oneliners}
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
 \frametitle{Example Oneliners}
 \begin{example}[Open File]
 \begin{verbatim}
-bpftrace -e 'tracepoint:syscalls:sys_enter_open 
-{ printf("%d %s %s\n", pid, comm, str(args->filename)); }'
+# bpftrace -e 'tracepoint:syscalls:sys_enter_open {
+  printf("%d %s %s\n", pid, comm, str(args->filename));
+}'
 \end{verbatim}
 \end{example}
 \end{frame}
@@ -319,7 +377,9 @@ bpftrace -e 'tracepoint:syscalls:sys_enter_open
 \frametitle{Example Oneliners}
 \begin{example}[Number of times when process open a file]
 \begin{verbatim}
-sudo bpftrace -e 't:syscalls:sys_enter_open { @[comm, str(args->filename)] = count();}'
+# bpftrace -e 't:syscalls:sys_enter_open { 
+  @[comm, str(args->filename)] = count();
+}'
 \end{verbatim}
 \end{example}
 \end{frame}
@@ -329,7 +389,9 @@ sudo bpftrace -e 't:syscalls:sys_enter_open { @[comm, str(args->filename)] = cou
 \frametitle{Example Oneliners}
 \begin{example}[Concurrency]
 \begin{verbatim}
-bpftrace -e 'k:vfs_read { @cpuhash = count(); @hash++; }'
+# bpftrace -e 'k:vfs_read { 
+  @cpuhash = count(); @hash++; 
+}'
 \end{verbatim}
 \end{example}
 \end{frame}
