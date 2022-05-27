@@ -43,11 +43,11 @@
 %\usetheme{Madrid}
 %\usetheme{Malmoe}
 %\usetheme{Marburg}
-%\usetheme{Montpellier}
+\usetheme{Montpellier}
 %\usetheme{PaloAlto}
 %\usetheme{Pittsburgh}
 %\usetheme{Rochester}
-\usetheme{Singapore}
+%\usetheme{Singapore}
 %\usetheme{Szeged}
 %\usetheme{Warsaw}
 
@@ -60,11 +60,11 @@
 %\usecolortheme{beetle}
 %\usecolortheme{crane}
 %\usecolortheme{dolphin}
-%\usecolortheme{dove}
+%\usecolortheme{dove} %this seems cool
 %\usecolortheme{fly}
 %\usecolortheme{lily}
-\usecolortheme{orchid}
-%\usecolortheme{rose}
+%\usecolortheme{orchid} %this is original
+\usecolortheme{rose} % this one is also ok, maybe #1
 %\usecolortheme{seagull}
 %\usecolortheme{seahorse}
 %\usecolortheme{whale}
@@ -73,13 +73,14 @@
 %\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
 %\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
 
-%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
 }
 
-\usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage[utf8]{inputenc}
-
+\usepackage[dvipdfmx]{graphicx} 
+\usepackage{bmpsize}
+\usepackage{grffile}
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
@@ -128,8 +129,8 @@ DataArt\\ % Your institution for the title page
 \begin{frame}
   \begin{block}{Tracing}
     \begin{itemize}
-      \item<1-> Typically it's an event-based recording.  Big volume require post-processing.
-      \item<2-> Some tracers doesn't record events but rather display, periodicaly updated, statistics. Tracers are: \emp{strace}, \emp{top}, \emp{tcpdump}. 
+      \item<+-> Typically it's an event-based recording.  Big volume require post-processing.
+      \item<+-> Some tracers doesn't record events but rather display, periodicaly updated, statistics. Tracers are: \emph{strace}, \emph{top}, \emph{tcpdump}. 
     \end{itemize}
   \end{block}
 \end{frame}
@@ -138,7 +139,7 @@ DataArt\\ % Your institution for the title page
 \begin{frame}
   \begin{block}{Snooping}
     \begin{itemize}
-      \item On Solaris tracer was called \emp{snoop}, that's the reason why we can find bpf based tracers that have snoop in name (execsnoop, opensoop, biosnoop).
+      \item On Solaris tracer was called \emph{snoop}, that's the reason why we can find bpf based tracers that have snoop in name (execsnoop, opensoop, biosnoop).
     \end{itemize}
   \end{block}
 \end{frame}
@@ -147,9 +148,9 @@ DataArt\\ % Your institution for the title page
 \begin{frame}
   \begin{block}{Sampling/Profiling}
     \begin{itemize}
-      \item<1-> Analyze part of measurements to show coarse grain picture of the system
-      \item<2-> Performance overhead can be lower than for tracers
-      \item<3-> Samples can be taken once every n miliseconds or n times per second 
+      \item<+-> Analyze part of measurements to show coarse grain picture of the system
+      \item<+-> Performance overhead can be lower than for tracers
+      \item<+-> Samples can be taken once every n miliseconds or n times per second 
     \end{itemize}
   \end{block} 
 \end{frame}
@@ -158,9 +159,9 @@ DataArt\\ % Your institution for the title page
 \begin{frame}
   \begin{block}{Observability}
     \begin{itemize}
-      \item<1-> Reasoning about the system through observation
-      \item<2-> BPF tools are observability tools including tracers, samplers
-      \item<3-> Benchmarks are not observability tools as they perform predefined work. This doesn't show actual system state
+      \item<+-> Reasoning about the system through observation
+      \item<+-> BPF tools are observability tools including tracers, samplers
+      \item<+-> Benchmarks are not observability tools as they perform predefined work. This doesn't show actual system state
     \end{itemize}
   \end{block} 
 \end{frame}
@@ -189,8 +190,9 @@ including the creation of advanced performance analysis tools.
   \begin{itemize}
     \item<1-> BPF code is similar to bytecode or simple assembly language
     \item<2-> It's rather low level concept designed to be emmited by higher level tools
-    \item<3-> sudo bpftrace -e 'tracepoint:syscalls:sys\_enter\_exec* { @[comm, pid]=count();}'
-		\begin{block}{sudo bpftool prog dump xlated id 4}
+    \item<3-> {\scriptsize \texttt{\# bpftrace -e 'tracepoint:syscalls:sys\_enter\_exec* \{ @[comm, pid]=count();\}' }}
+		\begin{block}{\scriptsize \texttt{\# bpftool prog dump xlated id 4}}
+      {\texttt 
 			 0: (b7) r1 = 0
 
 			 1: (7b) *(u64 *)(r10 -8) = r1
@@ -203,9 +205,10 @@ including the creation of advanced performance analysis tools.
 
 			 5: (b7) r2 = 16
 
-			 6: (85) call bpf\_get\_current\_comm#119536
+			 6: (85) call bpf\_get\_current\_comm\#119536
 			 
 			 ................
+		  }
       \end{block}
   \end{itemize}
 \end{frame}
@@ -230,7 +233,7 @@ including the creation of advanced performance analysis tools.
 		\item<2-> kprobe and kretprobe allows to calculate the duration of a function 
 		\item<3-> in bpftrace kprobes starts with 'kprobe:' or simple 'k:'
     \item<4-> breakepoint instruction int3 or jmp is set in place of target function address and is removed when no longer needed
-    \item<5-> #bpftrace -l 'kprobe:*'
+    \item<5-> {\scriptsize \texttt{\# bpftrace -l 'kprobe:*'}}
 	\end{itemize}	
 \end{frame}
 
@@ -241,13 +244,30 @@ including the creation of advanced performance analysis tools.
 		\item<2-> similar there is uretprobe
 		\item<3-> in bpftrace uprobes starts with 'uprobe:' or simple 'u:'
 		\item<4-> can be use to instrument libraries
-    \item<5-> #bpftrace -l 'uprobe:/lib/x86\_64-linux-gnu/libc.so.6'
+    \item<5-> {\scriptsize \texttt{\# bpftrace -l 'uprobe:/lib/x86\_64-linux-gnu/libc.so.6' }}
 	\end{itemize}	
 \end{frame}
 
 \begin{frame}
-  \frametitle{Static Instruemntation}
+  \frametitle{Static Instrumentation}
+	\begin{itemize}
+	  \item<1-> Dynamic instrumentation can instrument functions. Name of the function can change or can be inlined so script can stop working with new version of the library/kernel
+		\item<2-> Static instrumentation rely on stable event names not function names
+		\item<3-> Downside is that SI is harder to maintenance
+		\item<4-> Static kernel instrumentation $\Rightarrow$ tracepoints
+		\item<5-> Static user-space instrumentation $\Rightarrow$ USDT user-level statically defined tracing
+	\end{itemize}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Tracepoint}
+  \begin{quotation}
+    \small A tracepoint placed in code provides a hook to call a function (probe) that you can provide at runtime. A tracepoint can be “on” (a probe is connected to it) or “off” (no probe is attached). 
+   
+    \small When a tracepoint is “off” it has no effect, except for adding a tiny time penalty (checking a condition for a branch) and space penalty (adding a few bytes for the function call at the end of the instrumented function and adds a data structure in a separate section). 
+  \end{quotation}
+\end{frame}
+
 
 %------------------------------------------------
 \subsection{FrontEnd tools for BPF}
@@ -258,7 +278,16 @@ including the creation of advanced performance analysis tools.
     \item<2-> Instalation provides over 70 ready to use performance analysis tools
     \item<3-> No need to write BCC code by yourself
     \item<4-> opensoop, gethostlatency, biotop, tcpconlat, execsnoop and may other
+    \item<5-> ~120 small tools, typically /usr/share/bcc/tools
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \centering
+    %\noindent\makebox[\textwidth]{\includegraphics[width=\paperwidth]{bcc_tracing_tools_2019}}
+		\noindent\makebox[\textwidth]{\includegraphics[width=\paperwidth]{image.png}}
+  \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -267,7 +296,6 @@ including the creation of advanced performance analysis tools.
     \item<1-> New frontend tool
     \item<2-> Provide AWK like language to write very specific analytic tools often called oneliners
     \item<3-> More complicated tools can be written as a '.bt' scripts
-    \item<4-> 
   \end{itemize}
 \end{frame}
 
@@ -314,6 +342,7 @@ bpftrace -e 'k:vfs_read { @cpuhash = count(); @hash++; }'
 \bibitem[Gregg, 2020]{p1} Brendan Gregg (2020)
 \newblock BPF Performance Tools
 \newblock Linux System and Application Observability
+\bibitem[iovisor]{p1} \url{https://github.com/iovisor/bcc}
 \end{thebibliography}
 }
 \end{frame}
