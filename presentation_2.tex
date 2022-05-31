@@ -112,14 +112,29 @@ DataArt\\ % Your institution for the title page
 %\end{itemize}
 %\end{frame}
 
-\begin{frame}
-\frametitle{Overview} % Table of contents slide, comment this block out to remove it
-\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
-\end{frame}
-
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
+
+\section{Motivation}
+\begin{frame}
+    \centering
+		\huge Why this subject?
+\end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \centering
+		\noindent\makebox[\textwidth]{\includegraphics[scale=0.4]{cover}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \centering
+    \noindent\makebox[\textwidth]{\includegraphics[width=\paperwidth]{twitter_1}}
+  \end{figure}
+\end{frame}
 
 %------------------------------------------------
 \section{Introduction} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
@@ -128,10 +143,13 @@ DataArt\\ % Your institution for the title page
 
 \begin{frame}
   \begin{block}{Tracing}
-    \begin{itemize}
-      \item<+-> Typically it's an event-based recording.  Big volume require post-processing.
-      \item<+-> Some tracers doesn't record events but rather display, periodicaly updated, statistics. Tracers are: \emph{strace}, \emph{top}, \emph{tcpdump}. 
-    \end{itemize}
+		\begin{LARGE}
+			\begin{itemize}
+				\item<+-> Event-based recording.  
+				\item<+-> Can show periodicaly updated, statistics.
+				\item<+-> Tracers are: \emph{strace}, \emph{top}, \emph{tcpdump}. 
+			\end{itemize}
+		\end{LARGE}
   \end{block}
 \end{frame}
 
@@ -139,7 +157,7 @@ DataArt\\ % Your institution for the title page
 \begin{frame}
   \begin{block}{Snooping}
     \begin{itemize}
-      \item On Solaris tracer was called \emph{snoop}, that's the reason why we can find bpf based tracers that have snoop in name (execsnoop, opensoop, biosnoop).
+      \item \LARGE \emph{snoop = tracer}
     \end{itemize}
   \end{block}
 \end{frame}
@@ -147,22 +165,26 @@ DataArt\\ % Your institution for the title page
 
 \begin{frame}
   \begin{block}{Sampling/Profiling}
-    \begin{itemize}
-      \item<+-> Analyze part of measurements to show coarse grain picture of the system
-      \item<+-> Performance overhead can be lower than for tracers
-      \item<+-> Samples can be taken once every n miliseconds or n times per second 
-    \end{itemize}
+		\begin{Large}
+			\begin{itemize}
+				\item<+-> Analyze sub-set of all events
+				\item<+-> Performance overhead can be lower than for tracers
+				\item<+-> Samples can be taken once every n miliseconds 
+			\end{itemize}
+		\end{Large}
   \end{block} 
 \end{frame}
 
 
 \begin{frame}
   \begin{block}{Observability}
-    \begin{itemize}
-      \item<+-> Reasoning about the system through observation
-      \item<+-> BPF tools are observability tools including tracers, samplers
-      \item<+-> Benchmarks are not observability tools as they perform predefined work. This doesn't show actual system state
-    \end{itemize}
+		\begin{Large}
+			\begin{itemize}
+				\item<+-> Reasoning about the system through observation
+				\item<+-> Observability tools including tracers, samplers
+				\item<+-> Benchmarks are not observability tools
+			\end{itemize}
+		\end{Large}
   \end{block} 
 \end{frame}
 
