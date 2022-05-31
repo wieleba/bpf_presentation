@@ -193,25 +193,20 @@ DataArt\\ % Your institution for the title page
 
 \begin{frame}
 \frametitle{History}
-\begin{itemize}
-\item<1->
-BPF (Berkeley Packet Filter)
-
-A minimal instruction set that can be used to filter packets before they are seen by an application such
-as tcpdump
-\item<2->
-In 2014 Alexei Starovoitov created extend BPF so it could be use in wide areas.
-He turned BPF into a general-purpose virtual machine, that can be used for a variety of things,
-including the creation of advanced performance analysis tools.
-\item<3-> Nowdays BPF means actually eBPF
-\end{itemize}
+		\begin{Large}
+			\begin{itemize}
+				\item<1-> Original BPF (Berkeley Packet Filter)
+				\item<2-> eBPF ~2014 Alexei Starovoitov
+				\item<3-> Nowdays BPF means actually eBPF
+			\end{itemize}
+		\end{Large}
 \end{frame}
 
 \begin{frame}
   \frametitle{How BPF looks like?}
   \begin{itemize}
-    \item<1-> BPF code is similar to bytecode or simple assembly language
-    \item<2-> It's rather low level concept designed to be emmited by higher level tools
+    \item<1-> BPF =  bytecode similar to assembly language
+    \item<2-> Designed to be emmited by higher level tools
     \item<3-> {\scriptsize \texttt{\# bpftrace -e 'tracepoint:syscalls:sys\_enter\_exec* \{ @[comm, pid]=count();\}' }}
 		\begin{block}{\scriptsize \texttt{\# bpftool prog dump xlated id 4}}
       {\texttt 
@@ -237,37 +232,52 @@ including the creation of advanced performance analysis tools.
 
 \begin{frame}
   \frametitle{What makes BPF based tools sufficient for analysis in production}
+	\begin{Large}
   \begin{itemize}
-    \item<1-> Efficient and production safe 
-		\item<2-> Build-in into kernel
-    \item<3-> No need to add new kernel modules (verifier doesn't allow code that run kernel panic)
-		\item<4-> No need to copy every event from kernelspace to userspace 
+		\item<+-> Build-in into kernel
+    \item<+-> Efficient 
+		\item<+-> Production safe 
 	\end{itemize}
+	\end{Large}
 \end{frame}
 
 \subsection{Instrumentation}
 
 \begin{frame}
   \frametitle{Dynamic Instrumentation kprobes}
-  \begin{itemize}
-    \item<1-> kprobes can create instrumentation events for any kernel function, and it can instrument instructions within functions
 
-		\item<2-> kprobe and kretprobe allows to calculate the duration of a function 
-		\item<3-> in bpftrace kprobes starts with 'kprobe:' or simple 'k:'
-    \item<4-> breakepoint instruction int3 or jmp is set in place of target function address and is removed when no longer needed
+	\begin{Large}
+  \begin{itemize}
+    \item<1-> Kprobes can instrument any kernel function
+		\item<2-> Kretprobe allows checking ret vals
+		\item<3-> In bpftrace kprobes starts with 'kprobe:' or simple 'k:'
+    \item<4-> Breakepoint instruction int3 or jmp is set in place of target function address and is removed when no longer needed
     \item<5-> {\scriptsize \texttt{\# bpftrace -l 'kprobe:*'}}
 	\end{itemize}	
+\end{Large}
 \end{frame}
 
 \begin{frame}
   \frametitle{Dynamic Instrumentation uprobes}
+	\begin{Large}
   \begin{itemize}
-    \item<1-> uprobes are similar to kprobes but are designed to instrument user-space processes
-		\item<2-> similar there is uretprobe
-		\item<3-> in bpftrace uprobes starts with 'uprobe:' or simple 'u:'
-		\item<4-> can be use to instrument libraries
+    \item<1-> Uprobes are probes for user-space processes
+		\item<2-> Uretprobe
+		\item<3-> In bpftrace uprobes starts with 'uprobe:' or simple 'u:'
+		\item<4-> Can be use to instrument libraries and binary
     \item<5-> {\scriptsize \texttt{\# bpftrace -l 'uprobe:/lib/x86\_64-linux-gnu/libc.so.6' }}
 	\end{itemize}	
+\end{Large}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Demo}
+	\begin{Huge}
+  \begin{itemize}
+    \item<1-> INT3
+	\end{itemize}	
+\end{Huge}
 \end{frame}
 
 \begin{frame}
@@ -282,12 +292,14 @@ including the creation of advanced performance analysis tools.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Tracepoint}
-  \begin{quotation}
-    \small A tracepoint placed in code provides a hook to call a function (probe) that you can provide at runtime. A tracepoint can be “on” (a probe is connected to it) or “off” (no probe is attached). 
-   
-    \small When a tracepoint is “off” it has no effect, except for adding a tiny time penalty (checking a condition for a branch) and space penalty (adding a few bytes for the function call at the end of the instrumented function and adds a data structure in a separate section). 
-  \end{quotation}
+  \frametitle{Cost}
+	\begin{Large}
+		\begin{itemize}
+			\item<+-> Tracepoint introduce tiny time penalty and space penalty
+			\item<+-> Dynamic probes doesn't introduce cost when off
+			\item<+-> Raw tracepoints = faster version of normal tracepoints
+		\end{itemize}
+	\end{Large}
 \end{frame}
 
 
@@ -295,23 +307,43 @@ including the creation of advanced performance analysis tools.
 \subsection{FrontEnd tools for BPF}
 \begin{frame}
   \frametitle{BCC (BPF Compiler Collection)}
+	\begin{Large}
   \begin{itemize}
     \item<+-> BCC allows to write BPF kernel in C and user interface in Python, Lua or C++
     \item<+-> Instalation provides over 70 ready to use performance analysis tools
     \item<+-> No need to write BCC code by yourself
-    \item<+-> ~120 small tools, typically /usr/share/bcc/tools
+    \item<+-> /usr/share/bcc/tools
   \end{itemize}
+\end{Large}
 \end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \centering
+		\noindent\makebox[\textwidth]{\includegraphics[scale=0.4]{bcc_internals}}
+  \end{figure}
+\end{frame}
+
 
 
 \begin{frame}
   \frametitle{bpftrace}
+	\begin{Large}
   \begin{itemize}
     \item<+-> New frontend tool
     \item<+-> Provide AWK like language to write very specific analytic tools often called oneliners
     \item<+-> More complicated tools can be written as a '.bt' scripts
   \end{itemize}
+\end{Large}
 \end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \centering
+		\noindent\makebox[\textwidth]{\includegraphics[scale=0.4]{bpftrace_internals.jpg}}
+  \end{figure}
+\end{frame}
+
 
 \begin{frame}
   \begin{figure}
@@ -325,7 +357,11 @@ including the creation of advanced performance analysis tools.
 \section{Demo}
 %------------------------------------------------
 
+\begin{Large}
+
+
 \subsection{CPU}
+
 \begin{frame}
 	\begin{itemize}
 		\item<+-> cpuwalk
@@ -386,6 +422,7 @@ including the creation of advanced performance analysis tools.
 	\end{itemize}
 \end{frame}
 
+\end{Large}
 
 \subsection{oneliners}
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
