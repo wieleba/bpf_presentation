@@ -282,13 +282,14 @@ DataArt\\ % Your institution for the title page
 
 \begin{frame}
   \frametitle{Static Instrumentation}
+	\begin{Large}
 	\begin{itemize}
-	  \item<1-> Dynamic instrumentation can instrument functions. Name of the function can change or can be inlined so script can stop working with new version of the library/kernel
-		\item<2-> Static instrumentation rely on stable event names not function names
-		\item<3-> Downside is that SI is harder to maintenance
-		\item<4-> Static kernel instrumentation $\Rightarrow$ tracepoints
-		\item<5-> Static user-space instrumentation $\Rightarrow$ USDT user-level statically defined tracing
+		\item<+-> Dynamic instrumentation is unstable
+		\item<+-> Static instrumentation rely on stable event names not function names
+		\item<+-> Static kernel instrumentation $\Rightarrow$ tracepoints
+		\item<+-> Static user-space instrumentation $\Rightarrow$ USDT user-level statically defined tracing
 	\end{itemize}
+	\end{Large}
 \end{frame}
 
 \begin{frame}
